@@ -132,3 +132,7 @@ htmlcov/
 .coverage.*
 coverage.xml
 *.cover
+
+
+backend/apps/**/migrations/
+!backend/apps/**/migrations/__init__.py
