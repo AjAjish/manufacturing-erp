@@ -10,16 +10,37 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
-import { productionService, dashboardService } from '../../services/api';
+import { productionService, dashboardService, orderService } from '../../services/api';
 import Card from '../../components/common/Card';
 import DataTable from '../../components/common/DataTable';
 import StatsCard from '../../components/common/StatsCard';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import Modal from '../../components/common/Modal';
+import FormInput from '../../components/forms/FormInput';
+import FormSelect from '../../components/forms/FormSelect';
+import Alert from '../../components/common/Alert';
+import toast from 'react-hot-toast';
 
 export default function ProductionRecords() {
   const [records, setRecords] = useState([]);
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [orders, setOrders] = useState([]);
+  const [formData, setFormData] = useState({
+    order: '',
+    production_date: new Date().toISOString().split('T')[0],
+    shift: 'general',
+    planned_quantity: '',
+    produced_quantity: '',
+    ok_quantity: '',
+    rework_quantity: '',
+    rejection_quantity: '',
+    remarks: '',
+    rejection_reasons: '',
+  });
 
   useEffect(() => {
     fetchData();
@@ -28,16 +49,52 @@ export default function ProductionRecords() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [recordsRes, analyticsRes] = await Promise.all([
+      const [recordsRes, analyticsRes, ordersRes] = await Promise.all([
         productionService.getRecords(),
         dashboardService.getProductionAnalytics(30),
+        orderService.getAll(),
       ]);
       setRecords(recordsRes.data.results || recordsRes.data);
       setAnalytics(analyticsRes.data);
+      setOrders(ordersRes.data.results || ordersRes.data);
     } catch (error) {
       console.error('Failed to fetch production data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSaving(true);
+
+    try {
+      await productionService.create(formData);
+      setIsModalOpen(false);
+      setFormData({
+        order: '',
+        production_date: new Date().toISOString().split('T')[0],
+        shift: 'general',
+        planned_quantity: '',
+        produced_quantity: '',
+        ok_quantity: '',
+        rework_quantity: '',
+        rejection_quantity: '',
+        remarks: '',
+        rejection_reasons: '',
+      });
+      toast.success('Production record created successfully');
+      fetchData();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to create production record');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -91,7 +148,7 @@ export default function ProductionRecords() {
           <h1 className="text-2xl font-bold text-gray-900">Production</h1>
           <p className="mt-1 text-sm text-gray-500">Track production quantities and yield</p>
         </div>
-        <button className="btn-primary">
+        <button onClick={() => setIsModalOpen(true)} className="btn-primary">
           <PlusIcon className="-ml-1 mr-2 h-5 w-5" />
           Add Record
         </button>
@@ -155,6 +212,156 @@ export default function ProductionRecords() {
           emptyMessage="No production records found"
         />
       </Card>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setError('');
+        }}
+        title="Add Production Record"
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && <Alert variant="error">{error}</Alert>}
+
+          <FormSelect
+            label="Order"
+            name="order"
+            value={formData.order}
+            onChange={handleInputChange}
+            required
+            options={[
+              { value: '', label: 'Select order' },
+              ...orders.map(order => ({
+                value: order.id,
+                label: `${order.quote_number} - ${order.customer_name}`
+              }))
+            ]}
+          />
+
+          <div className="grid grid-cols-2 gap-4">
+            <FormInput
+              label="Production Date"
+              name="production_date"
+              type="date"
+              value={formData.production_date}
+              onChange={handleInputChange}
+              required
+            />
+            <FormSelect
+              label="Shift"
+              name="shift"
+              value={formData.shift}
+              onChange={handleInputChange}
+              required
+              options={[
+                { value: 'general', label: 'General Shift' },
+                { value: 'day', label: 'Day Shift' },
+                { value: 'night', label: 'Night Shift' },
+              ]}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <FormInput
+              label="Planned Quantity"
+              name="planned_quantity"
+              type="number"
+              value={formData.planned_quantity}
+              onChange={handleInputChange}
+              placeholder="Planned quantity"
+              min="0"
+            />
+            <FormInput
+              label="Produced Quantity"
+              name="produced_quantity"
+              type="number"
+              value={formData.produced_quantity}
+              onChange={handleInputChange}
+              placeholder="Produced quantity"
+              required
+              min="0"
+            />
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            <FormInput
+              label="OK Quantity"
+              name="ok_quantity"
+              type="number"
+              value={formData.ok_quantity}
+              onChange={handleInputChange}
+              placeholder="OK quantity"
+              required
+              min="0"
+            />
+            <FormInput
+              label="Rework Quantity"
+              name="rework_quantity"
+              type="number"
+              value={formData.rework_quantity}
+              onChange={handleInputChange}
+              placeholder="Rework quantity"
+              min="0"
+            />
+            <FormInput
+              label="Rejection Quantity"
+              name="rejection_quantity"
+              type="number"
+              value={formData.rejection_quantity}
+              onChange={handleInputChange}
+              placeholder="Rejection quantity"
+              min="0"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="remarks" className="label">
+              Remarks
+            </label>
+            <textarea
+              id="remarks"
+              name="remarks"
+              value={formData.remarks}
+              onChange={handleInputChange}
+              placeholder="Any remarks"
+              rows={2}
+              className="input"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="rejection_reasons" className="label">
+              Rejection Reasons
+            </label>
+            <textarea
+              id="rejection_reasons"
+              name="rejection_reasons"
+              value={formData.rejection_reasons}
+              onChange={handleInputChange}
+              placeholder="Reasons for rejection"
+              rows={2}
+              className="input"
+            />
+          </div>
+
+          <div className="flex justify-end space-x-3 pt-4">
+            <button
+              type="button"
+              onClick={() => {
+                setIsModalOpen(false);
+                setError('');
+              }}
+              className="btn-secondary"
+            >
+              Cancel
+            </button>
+            <button type="submit" disabled={saving} className="btn-primary">
+              {saving ? 'Creating...' : 'Create Record'}
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

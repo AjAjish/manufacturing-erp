@@ -34,7 +34,7 @@ export default function StatusBadge({ status, label }) {
   const displayLabel = label || status?.replace(/_/g, ' ');
 
   return (
-    <span className={clsx('badge capitalize', colorClass)}>
+    <span className={clsx('badge capitalize font-semibold', colorClass)}>
       {displayLabel}
     </span>
   );

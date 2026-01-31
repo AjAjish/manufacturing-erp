@@ -23,7 +23,7 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 bg-accent-900/40 backdrop-blur-sm transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -38,21 +38,21 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel
-                className={`relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full ${sizeClasses[size]}`}
+                className={`relative transform overflow-hidden rounded-2xl bg-white/95 backdrop-blur text-left shadow-elevation transition-all sm:my-8 sm:w-full ${sizeClasses[size]} dark:bg-accent-900/80`}
               >
-                <div className="flex items-center justify-between px-4 py-3 border-b">
-                  <Dialog.Title as="h3" className="text-lg font-semibold text-gray-900">
+                <div className="flex items-center justify-between px-6 py-5 border-b border-accent-100 dark:border-accent-800/50">
+                  <Dialog.Title as="h3" className="text-lg font-semibold text-accent-900 dark:text-white">
                     {title}
                   </Dialog.Title>
                   <button
                     type="button"
-                    className="text-gray-400 hover:text-gray-500"
+                    className="rounded-lg p-1.5 text-accent-400 hover:bg-accent-100 hover:text-accent-600 transition dark:hover:bg-accent-800/50 dark:text-accent-500"
                     onClick={onClose}
                   >
                     <XMarkIcon className="h-6 w-6" />
                   </button>
                 </div>
-                <div className="px-4 py-4">{children}</div>
+                <div className="px-6 py-6">{children}</div>
               </Dialog.Panel>
             </Transition.Child>
           </div>

@@ -7,6 +7,7 @@ export default function DataTable({
   loading,
   emptyMessage = 'No data available',
   onRowClick,
+  bordered = true,
 }) {
   if (loading) {
     return (
@@ -19,38 +20,38 @@ export default function DataTable({
   if (!data || data.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">{emptyMessage}</p>
+        <p className="text-accent-500 dark:text-accent-400">{emptyMessage}</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+    <div className="overflow-x-auto rounded-xl border border-accent-100 dark:border-accent-800/50">
+      <table className="min-w-full divide-y divide-accent-100 dark:divide-accent-800/50">
+        <thead className="bg-accent-50/50 dark:bg-accent-900/30">
           <tr>
             {columns.map((column) => (
               <th
                 key={column.key}
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="table-header"
               >
                 {column.label}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="divide-y divide-accent-100 dark:divide-accent-800/50 bg-white/50 dark:bg-accent-900/20">
           {data.map((row, rowIndex) => (
             <tr
               key={row.id || rowIndex}
               onClick={() => onRowClick && onRowClick(row)}
-              className={onRowClick ? 'cursor-pointer hover:bg-gray-50' : ''}
+              className={onRowClick ? 'table-row-hover cursor-pointer' : 'transition-colors duration-200'}
             >
               {columns.map((column) => (
                 <td
                   key={column.key}
-                  className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                  className="table-cell"
                 >
                   {column.render ? column.render(row[column.key], row) : row[column.key]}
                 </td>

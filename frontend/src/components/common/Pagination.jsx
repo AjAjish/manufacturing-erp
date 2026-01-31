@@ -35,8 +35,8 @@ export default function Pagination({
   }
 
   return (
-    <nav className="flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6">
-      <div className="flex flex-1 justify-between sm:hidden">
+    <nav className="flex items-center justify-between border-t border-accent-100 dark:border-accent-800/50 px-4 py-4 sm:px-6">
+      <div className="flex flex-1 justify-between sm:hidden gap-2">
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={!hasPrev}
@@ -54,17 +54,19 @@ export default function Pagination({
       </div>
       <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm text-gray-700">
-            Page <span className="font-medium">{currentPage}</span> of{' '}
-            <span className="font-medium">{totalPages}</span>
+          <p className="text-sm font-medium text-accent-700 dark:text-accent-300">
+            Page <span className="font-semibold">{currentPage}</span> of{' '}
+            <span className="font-semibold">{totalPages}</span>
           </p>
         </div>
         <div>
-          <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm">
+          <nav className="isolate inline-flex -space-x-px rounded-lg shadow-soft border border-accent-200 dark:border-accent-700 bg-white/50 dark:bg-accent-900/30 overflow-hidden">
             <button
               onClick={() => onPageChange(currentPage - 1)}
               disabled={!hasPrev}
-              className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-50"
+              className={clsx(
+                'relative inline-flex items-center px-2 py-2 text-accent-600 dark:text-accent-400 hover:bg-accent-100 dark:hover:bg-accent-800/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors',
+              )}
             >
               <ChevronLeftIcon className="h-5 w-5" />
             </button>
@@ -74,11 +76,11 @@ export default function Pagination({
                 onClick={() => typeof page === 'number' && onPageChange(page)}
                 disabled={page === '...'}
                 className={clsx(
-                  'relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300',
+                  'relative inline-flex items-center px-3 py-2 text-sm font-semibold transition-colors',
                   page === currentPage
-                    ? 'z-10 bg-primary-600 text-white focus-visible:outline-primary-600'
-                    : 'text-gray-900 hover:bg-gray-50',
-                  page === '...' && 'cursor-default'
+                    ? 'bg-primary-600 text-white hover:bg-primary-700'
+                    : 'text-accent-700 dark:text-accent-300 hover:bg-accent-100 dark:hover:bg-accent-800/50',
+                  page === '...' && 'cursor-default hover:bg-transparent dark:hover:bg-transparent'
                 )}
               >
                 {page}
@@ -87,7 +89,9 @@ export default function Pagination({
             <button
               onClick={() => onPageChange(currentPage + 1)}
               disabled={!hasNext}
-              className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-50"
+              className={clsx(
+                'relative inline-flex items-center px-2 py-2 text-accent-600 dark:text-accent-400 hover:bg-accent-100 dark:hover:bg-accent-800/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors',
+              )}
             >
               <ChevronRightIcon className="h-5 w-5" />
             </button>

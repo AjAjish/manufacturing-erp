@@ -17,6 +17,7 @@ import {
   UserCircleIcon,
   MoonIcon,
   SunIcon,
+  SparklesIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -44,7 +45,7 @@ export default function DashboardLayout() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-accent-50 via-white to-accent-100/50 dark:from-accent-950 dark:via-accent-900/50 dark:to-accent-900">
       {/* Mobile sidebar */}
       <Transition.Root show={sidebarOpen} as={Fragment}>
         <Dialog as="div" className="relative z-50 lg:hidden" onClose={setSidebarOpen}>
@@ -57,7 +58,7 @@ export default function DashboardLayout() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-slate-900/60" />
+            <div className="fixed inset-0 bg-accent-900/40 backdrop-blur-sm" />
           </Transition.Child>
 
           <div className="fixed inset-0 flex">
@@ -71,12 +72,17 @@ export default function DashboardLayout() {
               leaveTo="-translate-x-full"
             >
               <Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
-                <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4 dark:bg-slate-950">
-                  <div className="flex h-16 shrink-0 items-center">
-                    <span className="text-xl font-bold text-slate-900 dark:text-white">Manufacturing ERP</span>
+                <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white/95 backdrop-blur px-6 pb-4 dark:bg-accent-900/80">
+                  <div className="flex h-16 shrink-0 items-center gap-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary-600 to-primary-700">
+                      <SparklesIcon className="h-5 w-5 text-white" />
+                    </div>
+                    <span className="text-lg font-bold bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
+                      Manufacturing
+                    </span>
                   </div>
                   <nav className="flex flex-1 flex-col">
-                    <ul role="list" className="flex flex-1 flex-col gap-y-7">
+                    <ul role="list" className="flex flex-1 flex-col gap-y-1">
                       <li>
                         <ul role="list" className="-mx-2 space-y-1">
                           {filteredNavigation.map((item) => (
@@ -86,12 +92,12 @@ export default function DashboardLayout() {
                                 onClick={() => setSidebarOpen(false)}
                                 className={clsx(
                                   location.pathname.startsWith(item.href)
-                                    ? 'bg-primary-50 text-primary-700 dark:bg-slate-800 dark:text-white'
-                                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800',
-                                  'group flex gap-x-3 rounded-lg p-2 text-sm font-semibold transition'
+                                    ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300'
+                                    : 'text-accent-600 hover:bg-accent-100/50 hover:text-accent-900 dark:text-accent-300 dark:hover:bg-accent-800/30',
+                                  'group flex gap-x-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200'
                                 )}
                               >
-                                <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
+                                <item.icon className="h-5 w-5 shrink-0" aria-hidden="true" />
                                 {item.name}
                               </Link>
                             </li>
@@ -109,12 +115,17 @@ export default function DashboardLayout() {
 
       {/* Static sidebar for desktop */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-slate-200/70 bg-white px-6 pb-4 dark:border-slate-800 dark:bg-slate-950">
-          <div className="flex h-16 shrink-0 items-center">
-            <span className="text-xl font-bold text-slate-900 dark:text-white">Manufacturing ERP</span>
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-accent-100/50 bg-white/80 backdrop-blur-md px-6 pb-4 dark:border-accent-800/30 dark:bg-accent-900/40">
+          <div className="flex h-16 shrink-0 items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary-600 to-primary-700 shadow-lg">
+              <SparklesIcon className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-lg font-bold bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
+              Manufacturing
+            </span>
           </div>
           <nav className="flex flex-1 flex-col">
-            <ul role="list" className="flex flex-1 flex-col gap-y-7">
+            <ul role="list" className="flex flex-1 flex-col gap-y-1">
               <li>
                 <ul role="list" className="-mx-2 space-y-1">
                   {filteredNavigation.map((item) => (
@@ -123,12 +134,12 @@ export default function DashboardLayout() {
                         to={item.href}
                         className={clsx(
                           location.pathname.startsWith(item.href)
-                            ? 'bg-primary-50 text-primary-700 dark:bg-slate-800 dark:text-white'
-                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800',
-                          'group flex gap-x-3 rounded-lg p-2 text-sm font-semibold transition'
+                            ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300 shadow-soft'
+                            : 'text-accent-600 hover:bg-accent-100/50 hover:text-accent-900 dark:text-accent-300 dark:hover:bg-accent-800/30',
+                          'group flex gap-x-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200'
                         )}
                       >
-                        <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
+                        <item.icon className="h-5 w-5 shrink-0" aria-hidden="true" />
                         {item.name}
                       </Link>
                     </li>
@@ -136,10 +147,24 @@ export default function DashboardLayout() {
                 </ul>
               </li>
               <li className="mt-auto">
-                <div className="flex items-center gap-x-4 px-2 py-3 text-sm font-semibold leading-6 text-slate-600 dark:text-slate-300">
-                  <UserCircleIcon className="h-8 w-8 text-slate-400" />
-                  <span className="sr-only">Your profile</span>
-                  <span aria-hidden="true">{user?.full_name || user?.email}</span>
+                <div className="rounded-lg bg-accent-50/50 dark:bg-accent-800/20 px-3 py-3 border border-accent-100 dark:border-accent-800/50">
+                  <div className="flex items-center gap-x-3">
+                    <div className="flex-shrink-0">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-600">
+                        <span className="text-sm font-semibold text-white">
+                          {user?.first_name?.[0]?.toUpperCase() || 'U'}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-accent-900 dark:text-white truncate">
+                        {user?.first_name || user?.email}
+                      </p>
+                      <p className="text-xs text-accent-600 dark:text-accent-400 truncate capitalize">
+                        {user?.role_display || user?.role}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </li>
             </ul>
@@ -150,10 +175,10 @@ export default function DashboardLayout() {
       {/* Main content */}
       <div className="lg:pl-64">
         {/* Top bar */}
-        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-slate-200/70 bg-white/80 px-4 backdrop-blur sm:gap-x-6 sm:px-6 lg:px-8 dark:border-slate-800 dark:bg-slate-900/70">
+        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-accent-100/30 bg-white/70 backdrop-blur-md px-4 sm:gap-x-6 sm:px-6 lg:px-8 dark:border-accent-800/30 dark:bg-accent-900/30">
           <button
             type="button"
-            className="-m-2.5 p-2.5 text-slate-600 hover:text-slate-900 lg:hidden dark:text-slate-300"
+            className="-m-2.5 p-2.5 text-accent-600 hover:text-accent-900 hover:bg-accent-100/50 rounded-lg transition lg:hidden dark:text-accent-300 dark:hover:bg-accent-800/50"
             onClick={() => setSidebarOpen(true)}
           >
             <span className="sr-only">Open sidebar</span>
@@ -162,35 +187,40 @@ export default function DashboardLayout() {
 
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
             <div className="flex flex-1 items-center">
-              <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              <h1 className="text-lg font-bold text-accent-900 dark:text-white">
                 {filteredNavigation.find((n) => location.pathname.startsWith(n.href))?.name || 'Dashboard'}
               </h1>
             </div>
-            <div className="flex items-center gap-x-4 lg:gap-x-6">
+            <div className="flex items-center gap-x-3 lg:gap-x-4">
               <button
                 type="button"
                 onClick={toggleTheme}
-                className="inline-flex items-center gap-x-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                className={clsx(
+                  'inline-flex items-center justify-center gap-x-2 rounded-lg border px-3 py-2 text-sm font-semibold shadow-soft transition-all duration-200',
+                  theme === 'dark'
+                    ? 'border-accent-700 bg-accent-900/50 text-accent-300 hover:bg-accent-800'
+                    : 'border-accent-200 bg-white text-accent-700 hover:bg-accent-50'
+                )}
                 aria-label="Toggle theme"
               >
                 {theme === 'dark' ? (
-                  <SunIcon className="h-4 w-4" aria-hidden="true" />
+                  <>
+                    <SunIcon className="h-4 w-4" aria-hidden="true" />
+                    <span className="hidden sm:inline">Light</span>
+                  </>
                 ) : (
-                  <MoonIcon className="h-4 w-4" aria-hidden="true" />
+                  <>
+                    <MoonIcon className="h-4 w-4" aria-hidden="true" />
+                    <span className="hidden sm:inline">Dark</span>
+                  </>
                 )}
-                {theme === 'dark' ? 'Light' : 'Dark'}
               </button>
               {/* User menu */}
               <Menu as="div" className="relative">
-                <Menu.Button className="-m-1.5 flex items-center p-1.5">
-                  <span className="sr-only">Open user menu</span>
-                  <UserCircleIcon className="h-8 w-8 text-slate-400" />
-                  <span className="hidden lg:flex lg:items-center">
-                    <span className="ml-4 text-sm font-semibold leading-6 text-slate-900 dark:text-slate-100" aria-hidden="true">
-                      {user?.first_name} {user?.last_name}
-                    </span>
-                    <ChevronDownIcon className="ml-2 h-5 w-5 text-slate-400" aria-hidden="true" />
-                  </span>
+                <Menu.Button className="flex items-center gap-x-2 rounded-lg border border-accent-200 bg-white/50 px-3 py-2 text-sm font-semibold text-accent-900 shadow-soft transition-all hover:bg-accent-50 dark:border-accent-700 dark:bg-accent-900/50 dark:text-accent-100 dark:hover:bg-accent-800/50">
+                  <UserCircleIcon className="h-5 w-5" />
+                  <span className="hidden lg:inline">{user?.first_name || 'User'}</span>
+                  <ChevronDownIcon className="hidden lg:inline h-4 w-4 text-accent-500" aria-hidden="true" />
                 </Menu.Button>
                 <Transition
                   as={Fragment}
@@ -201,11 +231,13 @@ export default function DashboardLayout() {
                   leaveFrom="transform opacity-100 scale-100"
                   leaveTo="transform opacity-0 scale-95"
                 >
-                  <Menu.Items className="absolute right-0 z-10 mt-2.5 w-48 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-slate-900/10 focus:outline-none dark:bg-slate-900">
+                  <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-xl bg-white/95 backdrop-blur py-2 shadow-elevation ring-1 ring-accent-900/10 focus:outline-none dark:bg-accent-900/80 dark:ring-white/10">
                     <Menu.Item>
-                      <div className="border-b border-slate-100 px-4 py-2 text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
-                        <p className="font-medium text-slate-900 dark:text-slate-100">{user?.email}</p>
-                        <p className="capitalize">{user?.role_display || user?.role}</p>
+                      <div className="border-b border-accent-100 px-4 py-3 dark:border-accent-800/50">
+                        <p className="font-semibold text-accent-900 dark:text-white">{user?.email}</p>
+                        <p className="mt-1 text-xs font-medium text-accent-600 dark:text-accent-400 capitalize">
+                          {user?.role_display || user?.role}
+                        </p>
                       </div>
                     </Menu.Item>
                     <Menu.Item>
@@ -213,11 +245,11 @@ export default function DashboardLayout() {
                         <button
                           onClick={logout}
                           className={clsx(
-                            active ? 'bg-slate-50 dark:bg-slate-800' : '',
-                            'flex w-full items-center gap-x-2 px-4 py-2 text-sm text-slate-700 dark:text-slate-200'
+                            active ? 'bg-accent-50 dark:bg-accent-800/50' : '',
+                            'flex w-full items-center gap-x-2 px-4 py-2.5 text-sm font-semibold text-accent-700 dark:text-accent-300 transition-colors'
                           )}
                         >
-                          <ArrowRightOnRectangleIcon className="h-5 w-5" />
+                          <ArrowRightOnRectangleIcon className="h-4 w-4" />
                           Sign out
                         </button>
                       )}
@@ -230,7 +262,7 @@ export default function DashboardLayout() {
         </div>
 
         {/* Page content */}
-        <main className="py-6">
+        <main className="py-8">
           <div className="px-4 sm:px-6 lg:px-8">
             <Outlet />
           </div>
