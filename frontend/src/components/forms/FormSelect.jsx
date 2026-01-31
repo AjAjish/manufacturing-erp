@@ -19,6 +19,7 @@ export default function FormSelect({
       )}
       <select
         id={name}
+        name={name}
         className={clsx('input', error && 'border-red-500 focus:border-red-500 focus:ring-red-500/10 dark:focus:ring-red-500/20')}
         {...(register ? register(name) : {})}
         {...props}

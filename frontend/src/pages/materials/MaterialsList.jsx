@@ -20,11 +20,14 @@ export default function MaterialsList() {
     name: '',
     material_type: '',
     grade: '',
-    dimensions: '',
+    thickness: '',
+    width: '',
+    length: '',
     stock_quantity: '',
     minimum_stock: '',
     unit: 'kg',
     unit_price: '',
+    is_active: true,
   });
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
@@ -50,8 +53,8 @@ export default function MaterialsList() {
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
   const handleSubmit = async (e) => {
@@ -67,11 +70,14 @@ export default function MaterialsList() {
         name: '',
         material_type: '',
         grade: '',
-        dimensions: '',
+        thickness: '',
+        width: '',
+        length: '',
         stock_quantity: '',
         minimum_stock: '',
         unit: 'kg',
         unit_price: '',
+        is_active: true,
       });
       fetchMaterials();
     } catch (err) {
@@ -90,12 +96,12 @@ export default function MaterialsList() {
     { 
       key: 'stock_quantity', 
       label: 'Stock', 
-      render: (v, row) => `${v} ${row.unit_display}` 
+      render: (v, row) => `${v} ${row.unit_display} `
     },
     { 
       key: 'minimum_stock', 
       label: 'Min Stock', 
-      render: (v, row) => `${v} ${row.unit_display}` 
+      render: (v, row) => `${v} ${row.unit_display} `
     },
     {
       key: 'is_low_stock',
@@ -109,7 +115,7 @@ export default function MaterialsList() {
     { 
       key: 'unit_price', 
       label: 'Price', 
-      render: (v) => `₹${v}` 
+      render: (v) => `₹${v} `
     },
   ];
 
@@ -234,13 +240,35 @@ export default function MaterialsList() {
             />
           </div>
 
-          <FormInput
-            label="Dimensions"
-            name="dimensions"
-            value={formData.dimensions}
-            onChange={handleInputChange}
-            placeholder="e.g., 2000mm x 1000mm x 10mm"
-          />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <FormInput
+              label="Thickness (mm)"
+              name="thickness"
+              type="number"
+              step="0.001"
+              value={formData.thickness}
+              onChange={handleInputChange}
+              placeholder="e.g., 10"
+            />
+            <FormInput
+              label="Width (mm)"
+              name="width"
+              type="number"
+              step="0.001"
+              value={formData.width}
+              onChange={handleInputChange}
+              placeholder="e.g., 1000"
+            />
+            <FormInput
+              label="Length (mm)"
+              name="length"
+              type="number"
+              step="0.001"
+              value={formData.length}
+              onChange={handleInputChange}
+              placeholder="e.g., 2000"
+            />
+          </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <FormInput
@@ -269,26 +297,42 @@ export default function MaterialsList() {
               value={formData.unit}
               onChange={handleInputChange}
               options={[
-                { value: 'kg', label: 'Kilograms (kg)' },
-                { value: 'ton', label: 'Tons' },
-                { value: 'pcs', label: 'Pieces' },
-                { value: 'meter', label: 'Meters' },
-                { value: 'sqm', label: 'Square Meters' },
-                { value: 'ltr', label: 'Liters' },
+                { value: 'kg', label: 'Kilogram (kg)' },
+                { value: 'gram', label: 'Gram' },
+                { value: 'meter', label: 'Meter' },
+                { value: 'mm', label: 'Millimeter (mm)' },
+                { value: 'piece', label: 'Piece' },
+                { value: 'sheet', label: 'Sheet' },
+                { value: 'liter', label: 'Liter' },
               ]}
             />
           </div>
 
-          <FormInput
-            label="Unit Price (₹)"
-            name="unit_price"
-            type="number"
-            step="0.01"
-            value={formData.unit_price}
-            onChange={handleInputChange}
-            required
-            placeholder="0.00"
-          />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <FormInput
+              label="Unit Price (₹)"
+              name="unit_price"
+              type="number"
+              step="0.01"
+              value={formData.unit_price}
+              onChange={handleInputChange}
+              required
+              placeholder="0.00"
+            />
+            <div className="flex items-center gap-3 pt-7">
+              <input
+                id="is_active"
+                name="is_active"
+                type="checkbox"
+                checked={formData.is_active}
+                onChange={handleInputChange}
+                className="h-4 w-4 rounded border-accent-300 text-primary-600 focus:ring-primary-500"
+              />
+              <label htmlFor="is_active" className="text-sm font-medium text-accent-700">
+                Active
+              </label>
+            </div>
+          </div>
 
           <div className="flex justify-end space-x-3 pt-4">
             <button
