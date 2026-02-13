@@ -102,6 +102,7 @@ export const materialService = {
   getLowStock: () => api.get('/materials/materials/low_stock/'),
   adjustStock: (id, data) => api.post(`/materials/materials/${id}/adjust_stock/`, data),
   getOrderMaterials: (params) => api.get('/materials/order-materials/', { params }),
+  createOrderMaterial: (data) => api.post('/materials/order-materials/', data),
   issueMaterial: (id, data) => api.post(`/materials/order-materials/${id}/issue/`, data),
 };
 
