@@ -1,19 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { TruckIcon, CheckCircleIcon, ClockIcon } from '@heroicons/react/24/outline';
-import { logisticsService } from '../../services/api';
+import { TruckIcon, CheckCircleIcon, ClockIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { logisticsService, orderService } from '../../services/api';
 import Card from '../../components/common/Card';
 import DataTable from '../../components/common/DataTable';
 import StatsCard from '../../components/common/StatsCard';
 import StatusBadge from '../../components/common/StatusBadge';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import Modal from '../../components/common/Modal';
+import FormSelect from '../../components/forms/FormSelect';
+import FormInput from '../../components/forms/FormInput';
 import toast from 'react-hot-toast';
 
 export default function DispatchList() {
   const [dispatches, setDispatches] = useState([]);
   const [pendingDispatches, setPendingDispatches] = useState([]);
   const [inTransit, setInTransit] = useState([]);
+  const [packingStandards, setPackingStandards] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [formData, setFormData] = useState({
+    order: '',
+    packing_standard: '',
+    planned_dispatch_date: '',
+    transport_mode: 'road',
+    transport_scope: 'ex_works',
+    delivery_address: '',
+  });
 
   useEffect(() => {
     fetchData();
@@ -30,10 +45,40 @@ export default function DispatchList() {
       setDispatches(allRes.data.results || allRes.data);
       setPendingDispatches(pendingRes.data);
       setInTransit(transitRes.data);
+
+      const [standardsRes, ordersRes] = await Promise.all([
+        logisticsService.getPackingStandards(),
+        orderService.getAll(),
+      ]);
+      setPackingStandards(standardsRes.data.results || standardsRes.data || []);
+      setOrders(ordersRes.data.results || ordersRes.data || []);
     } catch (error) {
       console.error('Failed to fetch dispatches:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCreateDispatch = async (e) => {
+    e.preventDefault();
+    try {
+      setSaving(true);
+      await logisticsService.create(formData);
+      toast.success('Dispatch record created');
+      setIsModalOpen(false);
+      setFormData({
+        order: '',
+        packing_standard: '',
+        planned_dispatch_date: '',
+        transport_mode: 'road',
+        transport_scope: 'ex_works',
+        delivery_address: '',
+      });
+      fetchData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to create dispatch');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -136,6 +181,13 @@ export default function DispatchList() {
         <p className="mt-1 text-sm text-gray-500">Manage packing and dispatch operations</p>
       </div>
 
+      <div>
+        <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
+          <PlusIcon className="-ml-1 mr-2 h-5 w-5" />
+          Create Dispatch
+        </button>
+      </div>
+
       {/* Stats */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-4">
         <StatsCard
@@ -198,6 +250,98 @@ export default function DispatchList() {
           emptyMessage="No dispatch records found"
         />
       </Card>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Create Dispatch">
+        <form className="space-y-4" onSubmit={handleCreateDispatch}>
+          <FormSelect
+            label="Order"
+            name="order"
+            value={formData.order}
+            required
+            onChange={(e) => setFormData((prev) => ({ ...prev, order: e.target.value }))}
+            options={[
+              { value: '', label: 'Select order' },
+              ...orders.map((order) => ({
+                value: order.id,
+                label: `${order.quote_number} - ${order.customer_name || order.project_name}`,
+              })),
+            ]}
+          />
+
+          <FormSelect
+            label="Packing Standard"
+            name="packing_standard"
+            value={formData.packing_standard}
+            onChange={(e) => setFormData((prev) => ({ ...prev, packing_standard: e.target.value }))}
+            options={[
+              { value: '', label: 'Select standard' },
+              ...packingStandards.map((standard) => ({
+                value: standard.id,
+                label: `${standard.code} - ${standard.name}`,
+              })),
+            ]}
+          />
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <FormInput
+              label="Planned Dispatch Date"
+              name="planned_dispatch_date"
+              type="date"
+              value={formData.planned_dispatch_date}
+              onChange={(e) => setFormData((prev) => ({ ...prev, planned_dispatch_date: e.target.value }))}
+            />
+
+            <FormSelect
+              label="Transport Mode"
+              name="transport_mode"
+              value={formData.transport_mode}
+              onChange={(e) => setFormData((prev) => ({ ...prev, transport_mode: e.target.value }))}
+              options={[
+                { value: 'road', label: 'Road' },
+                { value: 'rail', label: 'Rail' },
+                { value: 'air', label: 'Air' },
+                { value: 'sea', label: 'Sea' },
+                { value: 'courier', label: 'Courier' },
+                { value: 'self_pickup', label: 'Self Pickup' },
+              ]}
+            />
+          </div>
+
+          <FormSelect
+            label="Transport Scope"
+            name="transport_scope"
+            value={formData.transport_scope}
+            onChange={(e) => setFormData((prev) => ({ ...prev, transport_scope: e.target.value }))}
+            options={[
+              { value: 'ex_works', label: 'Ex Works' },
+              { value: 'fob', label: 'FOB' },
+              { value: 'cif', label: 'CIF' },
+              { value: 'door_delivery', label: 'Door Delivery' },
+            ]}
+          />
+
+          <div>
+            <label htmlFor="delivery_address" className="label">Delivery Address</label>
+            <textarea
+              id="delivery_address"
+              name="delivery_address"
+              rows={3}
+              className="input"
+              value={formData.delivery_address}
+              onChange={(e) => setFormData((prev) => ({ ...prev, delivery_address: e.target.value }))}
+            />
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4">
+            <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </button>
+            <button type="submit" className="btn-primary" disabled={saving}>
+              {saving ? 'Creating...' : 'Create Dispatch'}
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

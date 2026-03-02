@@ -9,9 +9,11 @@ import {
   UserGroupIcon,
   CubeIcon,
   WrenchScrewdriverIcon,
+  Cog6ToothIcon,
   ClipboardDocumentCheckIcon,
   TruckIcon,
   UsersIcon,
+  ShieldCheckIcon,
   ChevronDownIcon,
   ArrowRightOnRectangleIcon,
   UserCircleIcon,
@@ -29,8 +31,10 @@ const navigation = [
   { name: 'Customers', href: '/customers', icon: UserGroupIcon, roles: ['admin', 'sales'] },
   { name: 'Materials', href: '/materials', icon: CubeIcon, roles: ['admin', 'production', 'engineering'] },
   { name: 'Production', href: '/production', icon: WrenchScrewdriverIcon, roles: ['admin', 'production'] },
+  { name: 'Fabrication', href: '/fabrication', icon: Cog6ToothIcon, roles: ['admin', 'production'] },
   { name: 'Inspection', href: '/inspection', icon: ClipboardDocumentCheckIcon, roles: ['admin', 'quality'] },
   { name: 'Logistics', href: '/logistics', icon: TruckIcon, roles: ['admin', 'logistics'] },
+  { name: 'Audit', href: '/audit', icon: ShieldCheckIcon, roles: ['admin'] },
   { name: 'Users', href: '/users', icon: UsersIcon, roles: ['admin'] },
 ];
 

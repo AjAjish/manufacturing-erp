@@ -16,7 +16,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-this-in-produc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['.onerender.com']
+ALLOWED_HOSTS = ['.onerender.com', 'localhost', '127.0.0.1']
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -174,8 +174,8 @@ SIMPLE_JWT = {
 # CORS Configuration
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
-    default='https://manufacturing-erp-ui-sandy.vercel.app/',
-    cast=lambda v: [s.strip() for s in v.split(',')]
+    default='http://localhost:3000,http://127.0.0.1:3000,http://localhost:8000,http://127.0.0.1:8000,http://manufacturing-erp-ui-sandy.vercel.app',
+    cast=lambda v: [s.strip() for s in v.split(',') if s.strip()]
 )
 CORS_ALLOW_CREDENTIALS = True
 

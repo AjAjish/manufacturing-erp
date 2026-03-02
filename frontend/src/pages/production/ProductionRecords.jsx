@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PlusIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, CheckBadgeIcon } from '@heroicons/react/24/outline';
 import {
   BarChart,
   Bar,
@@ -24,11 +24,14 @@ import toast from 'react-hot-toast';
 export default function ProductionRecords() {
   const [records, setRecords] = useState([]);
   const [analytics, setAnalytics] = useState(null);
+  const [dailySummary, setDailySummary] = useState(null);
+  const [summaries, setSummaries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [orders, setOrders] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState('');
   const [formData, setFormData] = useState({
     order: '',
     production_date: new Date().toISOString().split('T')[0],
@@ -57,10 +60,43 @@ export default function ProductionRecords() {
       setRecords(recordsRes.data.results || recordsRes.data);
       setAnalytics(analyticsRes.data);
       setOrders(ordersRes.data.results || ordersRes.data);
+
+      const [dailyRes, summariesRes] = await Promise.all([
+        productionService.getDailySummary(new Date().toISOString().split('T')[0]),
+        productionService.getSummaries(),
+      ]);
+      setDailySummary(dailyRes.data || null);
+      setSummaries(summariesRes.data.results || summariesRes.data || []);
     } catch (error) {
       console.error('Failed to fetch production data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleOrderFilter = async () => {
+    try {
+      setLoading(true);
+      if (!selectedOrder) {
+        await fetchData();
+        return;
+      }
+      const byOrderRes = await productionService.getByOrder(selectedOrder);
+      setRecords(byOrderRes.data.results || byOrderRes.data || []);
+    } catch (error) {
+      toast.error('Failed to filter by order');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerify = async (id) => {
+    try {
+      await productionService.verify(id);
+      toast.success('Record verified');
+      handleOrderFilter();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to verify record');
     }
   };
 
@@ -128,6 +164,24 @@ export default function ProductionRecords() {
       )
     },
     { key: 'recorded_by_name', label: 'Recorded By' },
+    {
+      key: 'verified_by_name',
+      label: 'Verified By',
+      render: (v) => v || '-',
+    },
+    {
+      key: 'actions',
+      label: 'Actions',
+      render: (_, row) => (
+        row.verified_by_name ? (
+          <span className="badge badge-green">Verified</span>
+        ) : (
+          <button className="btn-tertiary px-3 py-2" onClick={() => handleVerify(row.id)}>
+            <CheckBadgeIcon className="h-4 w-4 mr-1" /> Verify
+          </button>
+        )
+      )
+    },
   ];
 
   if (loading) {
@@ -153,6 +207,24 @@ export default function ProductionRecords() {
           Add Record
         </button>
       </div>
+
+      <Card title="Filters">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+          <div className="w-full sm:w-80">
+            <FormSelect
+              label="Filter by Order"
+              name="selected_order"
+              value={selectedOrder}
+              onChange={(e) => setSelectedOrder(e.target.value)}
+              options={[
+                { value: '', label: 'All orders' },
+                ...orders.map((order) => ({ value: order.id, label: `${order.quote_number} - ${order.customer_name || order.project_name}` })),
+              ]}
+            />
+          </div>
+          <button className="btn-secondary" onClick={handleOrderFilter}>Apply Filter</button>
+        </div>
+      </Card>
 
       {/* Stats */}
       {analytics && (
@@ -184,6 +256,29 @@ export default function ProductionRecords() {
           />
         </div>
       )}
+
+      {dailySummary && (
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+          <StatsCard title="Today's Records" value={dailySummary.record_count || 0} color="blue" />
+          <StatsCard title="Today's Produced" value={dailySummary.total_produced || 0} color="primary" />
+          <StatsCard title="Today's OK" value={dailySummary.total_ok || 0} color="green" />
+        </div>
+      )}
+
+      <Card title="Production Summaries">
+        <DataTable
+          columns={[
+            { key: 'order_quote_number', label: 'Order' },
+            { key: 'total_produced', label: 'Produced' },
+            { key: 'total_ok', label: 'OK' },
+            { key: 'total_rejection', label: 'Rejection' },
+            { key: 'overall_yield_percentage', label: 'Yield %' },
+            { key: 'completion_percentage', label: 'Completion %' },
+          ]}
+          data={summaries}
+          emptyMessage="No summaries found"
+        />
+      </Card>
 
       {/* Chart */}
       <Card title="Production Trend (Last 14 Days)">

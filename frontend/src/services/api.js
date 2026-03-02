@@ -112,6 +112,7 @@ export const productionService = {
   create: (data) => api.post('/production/records/', data),
   update: (id, data) => api.patch(`/production/records/${id}/`, data),
   verify: (id) => api.post(`/production/records/${id}/verify/`),
+  getByOrder: (orderId) => api.get('/production/records/by_order/', { params: { order_id: orderId } }),
   getDailySummary: (date) => api.get('/production/records/daily_summary/', { params: { date } }),
   getYieldAnalysis: (params) => api.get('/production/records/yield_analysis/', { params }),
   getSummaries: (params) => api.get('/production/summaries/', { params }),
@@ -120,10 +121,13 @@ export const productionService = {
 export const fabricationService = {
   getProcesses: () => api.get('/fabrication/processes/'),
   getOrderFabrications: (params) => api.get('/fabrication/order-fabrications/', { params }),
+  create: (data) => api.post('/fabrication/order-fabrications/', data),
   start: (id) => api.post(`/fabrication/order-fabrications/${id}/start/`),
   complete: (id, data) => api.post(`/fabrication/order-fabrications/${id}/complete/`, data),
   hold: (id, data) => api.post(`/fabrication/order-fabrications/${id}/hold/`, data),
   bulkCreate: (data) => api.post('/fabrication/order-fabrications/bulk_create/', data),
+  getByOrder: (orderId) => api.get('/fabrication/order-fabrications/by_order/', { params: { order_id: orderId } }),
+  getInProgress: () => api.get('/fabrication/order-fabrications/in_progress/'),
 };
 
 export const inspectionService = {
@@ -169,4 +173,14 @@ export const userService = {
   update: (id, data) => api.patch(`/accounts/users/${id}/`, data),
   changeRole: (id, role) => api.post(`/accounts/users/${id}/change_role/`, { role }),
   toggleActive: (id) => api.post(`/accounts/users/${id}/toggle_active/`),
+};
+
+export const auditService = {
+  getLogs: (params) => api.get('/audit/logs/', { params }),
+  getLogById: (id) => api.get(`/audit/logs/${id}/`),
+  getLogsByUser: (userId) => api.get('/audit/logs/by_user/', { params: { user_id: userId } }),
+  getLogsByModel: (modelName) => api.get('/audit/logs/by_model/', { params: { model_name: modelName } }),
+  getLogsByObject: (objectId) => api.get('/audit/logs/by_object/', { params: { object_id: objectId } }),
+  getStatistics: (days) => api.get('/audit/logs/statistics/', { params: days ? { days } : {} }),
+  getActivities: (params) => api.get('/audit/activities/', { params }),
 };

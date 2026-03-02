@@ -17,6 +17,8 @@ import MaterialsList from './pages/materials/MaterialsList';
 import ProductionRecords from './pages/production/ProductionRecords';
 import InspectionList from './pages/inspection/InspectionList';
 import DispatchList from './pages/logistics/DispatchList';
+import FabricationList from './pages/fabrication/FabricationList';
+import AuditLogs from './pages/audit/AuditLogs';
 import UsersList from './pages/users/UsersList';
 import NotFound from './pages/NotFound';
 
@@ -91,12 +93,32 @@ function App() {
         
         {/* Production */}
         <Route path="production" element={<ProductionRecords />} />
+
+        {/* Fabrication */}
+        <Route
+          path="fabrication"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'production']}>
+              <FabricationList />
+            </ProtectedRoute>
+          }
+        />
         
         {/* Inspection */}
         <Route path="inspection" element={<InspectionList />} />
         
         {/* Logistics */}
         <Route path="logistics" element={<DispatchList />} />
+
+        {/* Audit (Admin only) */}
+        <Route
+          path="audit"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AuditLogs />
+            </ProtectedRoute>
+          }
+        />
         
         {/* Users (Admin only) */}
         <Route
