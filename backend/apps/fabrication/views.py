@@ -19,6 +19,7 @@ from .serializers import (
 )
 from apps.accounts.permissions import IsProduction
 from apps.crm.models import Order
+from apps.crm.services import update_order_status
 
 
 class FabricationProcessViewSet(viewsets.ModelViewSet):
@@ -90,6 +91,14 @@ class OrderFabricationViewSet(viewsets.ModelViewSet):
         fabrication.started_at = timezone.now()
         fabrication.updated_by = request.user
         fabrication.save()
+
+        if fabrication.order.status in [Order.Status.DRAFT, Order.Status.QUOTED, Order.Status.CONFIRMED]:
+            update_order_status(
+                order=fabrication.order,
+                new_status=Order.Status.IN_PRODUCTION,
+                changed_by=request.user,
+                notes='Fabrication process started'
+            )
         
         # Create log
         FabricationLog.objects.create(
@@ -122,6 +131,17 @@ class OrderFabricationViewSet(viewsets.ModelViewSet):
         fabrication.completed_at = timezone.now()
         fabrication.updated_by = request.user
         fabrication.save()
+
+        pending_fabrications = fabrication.order.fabrication_processes.exclude(
+            status__in=[OrderFabrication.Status.COMPLETED, OrderFabrication.Status.SKIPPED]
+        ).exists()
+        if not pending_fabrications and fabrication.order.status in [Order.Status.IN_PRODUCTION, Order.Status.CONFIRMED]:
+            update_order_status(
+                order=fabrication.order,
+                new_status=Order.Status.QUALITY_CHECK,
+                changed_by=request.user,
+                notes='All fabrication processes completed'
+            )
         
         # Create log
         FabricationLog.objects.create(

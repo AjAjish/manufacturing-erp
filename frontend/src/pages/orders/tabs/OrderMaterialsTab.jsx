@@ -28,7 +28,7 @@ export default function OrderMaterialsTab({ order, onRefresh }) {
   const fetchMaterials = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/materials/order-materials/by_order/', {
+      const response = await api.get('/inventory/order-inventory/by_order/', {
         params: { order_id: order.id },
       });
       setMaterials(response.data);
@@ -108,7 +108,7 @@ export default function OrderMaterialsTab({ order, onRefresh }) {
   return (
     <>
       <Card 
-        title="Materials Required"
+        title="Inventory Required"
         actions={
           <button
             onClick={openModal}
@@ -169,7 +169,7 @@ export default function OrderMaterialsTab({ order, onRefresh }) {
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-gray-500">No materials assigned to this order</p>
+            <p className="text-gray-500">No inventory items assigned to this order</p>
             <button
               onClick={openModal}
               className="btn-primary mt-4"
@@ -221,7 +221,7 @@ export default function OrderMaterialsTab({ order, onRefresh }) {
                   </Dialog.Title>
 
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Search Materials */}
+                    {/* Search Inventory */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Search and Select Material
@@ -240,7 +240,7 @@ export default function OrderMaterialsTab({ order, onRefresh }) {
                       </div>
                     </div>
 
-                    {/* Materials List */}
+                    {/* Inventory List */}
                     <div className="border border-gray-200 rounded-lg max-h-96 overflow-y-auto">
                       {loadingMaterials ? (
                         <div className="flex justify-center py-8">
@@ -302,7 +302,7 @@ export default function OrderMaterialsTab({ order, onRefresh }) {
                       ) : (
                         <div className="text-center py-8">
                           <p className="text-gray-500">
-                            {searchTerm ? 'No materials found matching your search' : 'No materials available'}
+                            {searchTerm ? 'No inventory items found matching your search' : 'No inventory items available'}
                           </p>
                         </div>
                       )}

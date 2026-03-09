@@ -1,5 +1,5 @@
 """
-URL patterns for Materials app.
+URL patterns for Inventory app.
 """
 
 from django.urls import path, include
@@ -13,8 +13,11 @@ from .views import (
 
 router = DefaultRouter()
 router.register(r'types', MaterialTypeViewSet, basename='material-type')
-router.register(r'materials', MaterialViewSet, basename='material')
-router.register(r'order-materials', OrderMaterialViewSet, basename='order-material')
+router.register(r'inventory', MaterialViewSet, basename='material')
+router.register(r'order-inventory', OrderMaterialViewSet, basename='order-material')
+# Backward-compatible aliases for existing clients
+router.register(r'materials', MaterialViewSet, basename='legacy-material')
+router.register(r'order-materials', OrderMaterialViewSet, basename='legacy-order-material')
 router.register(r'transactions', MaterialTransactionViewSet, basename='material-transaction')
 
 urlpatterns = [

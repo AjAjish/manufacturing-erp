@@ -23,6 +23,9 @@ def track_status_change(sender, instance, **kwargs):
 @receiver(post_save, sender=Order)
 def create_status_history(sender, instance, created, **kwargs):
     """Create status history entry when status changes."""
+    if getattr(instance, '_skip_auto_status_history', False):
+        return
+
     previous_status = getattr(instance, '_previous_status', None)
     
     if created:

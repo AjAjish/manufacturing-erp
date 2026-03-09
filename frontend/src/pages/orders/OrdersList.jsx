@@ -6,6 +6,7 @@ import Card from '../../components/common/Card';
 import DataTable from '../../components/common/DataTable';
 import StatusBadge from '../../components/common/StatusBadge';
 import { useAuth } from '../../context/AuthContext';
+import { getOrderProgress } from '../../utils/orderProgress';
 
 export default function OrdersList() {
   const [orders, setOrders] = useState([]);
@@ -57,14 +58,17 @@ export default function OrdersList() {
     {
       key: 'status_percentage',
       label: 'Progress',
-      render: (value) => (
+      render: (value, row) => {
+        const progress = getOrderProgress(row.status, value);
+        return (
         <div className="w-full bg-gray-200 rounded-full h-2.5">
           <div
             className="bg-primary-600 h-2.5 rounded-full"
-            style={{ width: `${value}%` }}
+            style={{ width: `${progress}%` }}
           ></div>
         </div>
-      ),
+        );
+      },
     },
     { key: 'expected_delivery_date', label: 'Delivery Date' },
   ];

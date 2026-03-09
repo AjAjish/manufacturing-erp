@@ -29,7 +29,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, roles: [] },
   { name: 'Orders', href: '/orders', icon: ClipboardDocumentListIcon, roles: [] },
   { name: 'Customers', href: '/customers', icon: UserGroupIcon, roles: ['admin', 'sales'] },
-  { name: 'Materials', href: '/materials', icon: CubeIcon, roles: ['admin', 'production', 'engineering'] },
+  { name: 'Inventory', href: '/inventory', icon: CubeIcon, roles: ['admin', 'production', 'engineering'] },
   { name: 'Production', href: '/production', icon: WrenchScrewdriverIcon, roles: ['admin', 'production'] },
   { name: 'Fabrication', href: '/fabrication', icon: Cog6ToothIcon, roles: ['admin', 'production'] },
   { name: 'Inspection', href: '/inspection', icon: ClipboardDocumentCheckIcon, roles: ['admin', 'quality'] },

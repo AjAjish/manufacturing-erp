@@ -19,6 +19,7 @@ from .serializers import (
     QAApprovalSerializer
 )
 from apps.accounts.permissions import IsQuality
+from apps.crm.services import update_order_status
 
 
 class InspectionTypeViewSet(viewsets.ModelViewSet):
@@ -79,8 +80,12 @@ class OrderInspectionViewSet(viewsets.ModelViewSet):
             from apps.crm.models import Order
             order = inspection.order
             if order.status == Order.Status.QUALITY_CHECK:
-                order.status = Order.Status.READY_FOR_DISPATCH
-                order.save()
+                update_order_status(
+                    order=order,
+                    new_status=Order.Status.READY_FOR_DISPATCH,
+                    changed_by=request.user,
+                    notes='PDI approved by QA'
+                )
         
         return Response(OrderInspectionSerializer(inspection).data)
 

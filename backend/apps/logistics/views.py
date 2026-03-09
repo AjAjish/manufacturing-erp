@@ -20,6 +20,7 @@ from .serializers import (
 )
 from apps.accounts.permissions import IsLogistics
 from apps.crm.models import Order
+from apps.crm.services import update_order_status
 
 
 class PackingStandardViewSet(viewsets.ModelViewSet):
@@ -152,8 +153,12 @@ class OrderDispatchViewSet(viewsets.ModelViewSet):
         
         # Update order status
         order = dispatch.order
-        order.status = Order.Status.DISPATCHED
-        order.save()
+        update_order_status(
+            order=order,
+            new_status=Order.Status.DISPATCHED,
+            changed_by=request.user,
+            notes='Status updated from dispatch workflow'
+        )
         
         return Response(OrderDispatchSerializer(dispatch, context={'request': request}).data)
 
@@ -193,9 +198,14 @@ class OrderDispatchViewSet(viewsets.ModelViewSet):
         
         # Update order status
         order = dispatch.order
-        order.status = Order.Status.COMPLETED
+        update_order_status(
+            order=order,
+            new_status=Order.Status.COMPLETED,
+            changed_by=request.user,
+            notes='Order delivered'
+        )
         order.actual_delivery_date = dispatch.actual_delivery_date
-        order.save()
+        order.save(update_fields=['actual_delivery_date', 'updated_at'])
         
         return Response(OrderDispatchSerializer(dispatch, context={'request': request}).data)
 

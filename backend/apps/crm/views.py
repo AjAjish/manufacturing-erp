@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Count, Q
 from .models import Customer, Order, OrderStatusHistory
+from .services import update_order_status
 from .serializers import (
     CustomerListSerializer,
     CustomerDetailSerializer,
@@ -119,19 +120,12 @@ class OrderViewSet(viewsets.ModelViewSet):
         order = self.get_object()
         serializer = OrderStatusUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
-        previous_status = order.status
+
         new_status = serializer.validated_data['status']
         notes = serializer.validated_data.get('notes', '')
-        
-        # Update order status
-        order.status = new_status
-        order.save()
-        
-        # Create status history
-        OrderStatusHistory.objects.create(
+
+        update_order_status(
             order=order,
-            previous_status=previous_status,
             new_status=new_status,
             changed_by=request.user,
             notes=notes

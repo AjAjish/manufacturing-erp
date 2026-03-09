@@ -128,7 +128,7 @@ class RolePermission(models.Model):
     class Module(models.TextChoices):
         CRM = 'crm', _('CRM')
         ENGINEERING = 'engineering', _('Engineering')
-        MATERIALS = 'materials', _('Materials')
+        MATERIALS = 'materials', _('Inventory')
         PRODUCTION = 'production', _('Production')
         FABRICATION = 'fabrication', _('Fabrication')
         SURFACE_TREATMENT = 'surface_treatment', _('Surface Treatment')

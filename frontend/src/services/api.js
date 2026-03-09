@@ -94,16 +94,16 @@ export const customerService = {
 };
 
 export const materialService = {
-  getTypes: () => api.get('/materials/types/'),
-  getAll: (params) => api.get('/materials/materials/', { params }),
-  getById: (id) => api.get(`/materials/materials/${id}/`),
-  create: (data) => api.post('/materials/materials/', data),
-  update: (id, data) => api.patch(`/materials/materials/${id}/`, data),
-  getLowStock: () => api.get('/materials/materials/low_stock/'),
-  adjustStock: (id, data) => api.post(`/materials/materials/${id}/adjust_stock/`, data),
-  getOrderMaterials: (params) => api.get('/materials/order-materials/', { params }),
-  createOrderMaterial: (data) => api.post('/materials/order-materials/', data),
-  issueMaterial: (id, data) => api.post(`/materials/order-materials/${id}/issue/`, data),
+  getTypes: () => api.get('/inventory/types/'),
+  getAll: (params) => api.get('/inventory/inventory/', { params }),
+  getById: (id) => api.get(`/inventory/inventory/${id}/`),
+  create: (data) => api.post('/inventory/inventory/', data),
+  update: (id, data) => api.patch(`/inventory/inventory/${id}/`, data),
+  getLowStock: () => api.get('/inventory/inventory/low_stock/'),
+  adjustStock: (id, data) => api.post(`/inventory/inventory/${id}/adjust_stock/`, data),
+  getOrderMaterials: (params) => api.get('/inventory/order-inventory/', { params }),
+  createOrderMaterial: (data) => api.post('/inventory/order-inventory/', data),
+  issueMaterial: (id, data) => api.post(`/inventory/order-inventory/${id}/issue/`, data),
 };
 
 export const productionService = {

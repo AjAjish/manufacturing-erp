@@ -88,8 +88,9 @@ function App() {
         <Route path="customers" element={<CustomersList />} />
         <Route path="customers/:id" element={<CustomerDetail />} />
         
-        {/* Materials */}
-        <Route path="materials" element={<MaterialsList />} />
+        {/* Inventory */}
+        <Route path="inventory" element={<MaterialsList />} />
+        <Route path="materials" element={<Navigate to="/inventory" replace />} />
         
         {/* Production */}
         <Route path="production" element={<ProductionRecords />} />

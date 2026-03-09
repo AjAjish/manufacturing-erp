@@ -6,6 +6,7 @@ import { orderService } from '../../services/api';
 import Card from '../../components/common/Card';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import StatusBadge from '../../components/common/StatusBadge';
+import { getOrderProgress } from '../../utils/orderProgress';
 import clsx from 'clsx';
 
 // Tab Components
@@ -20,7 +21,7 @@ import OrderLogisticsTab from './tabs/OrderLogisticsTab';
 const tabs = [
   { name: 'CRM', component: OrderCRMTab },
   { name: 'Engineering', component: OrderEngineeringTab },
-  { name: 'Materials', component: OrderMaterialsTab },
+  { name: 'Inventory', component: OrderMaterialsTab },
   { name: 'Production', component: OrderProductionTab },
   { name: 'Fabrication', component: OrderFabricationTab },
   { name: 'Inspection', component: OrderInspectionTab },
@@ -32,6 +33,7 @@ export default function OrderDetail() {
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const progress = getOrderProgress(order?.status, order?.status_percentage);
 
   useEffect(() => {
     fetchOrder();
@@ -94,12 +96,12 @@ export default function OrderDetail() {
       <Card>
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-gray-700">Order Progress</span>
-          <span className="text-sm font-medium text-gray-900">{order.status_percentage}%</span>
+          <span className="text-sm font-medium text-gray-900">{progress}%</span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-3">
           <div
             className="bg-primary-600 h-3 rounded-full transition-all duration-300"
-            style={{ width: `${order.status_percentage}%` }}
+            style={{ width: `${progress}%` }}
           ></div>
         </div>
       </Card>

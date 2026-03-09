@@ -125,7 +125,7 @@ export default function MaterialsList() {
     <div className="space-y-6">
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Materials</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Inventory</h1>
           <p className="mt-1 text-sm text-gray-500">Manage material inventory</p>
         </div>
         <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
@@ -137,7 +137,7 @@ export default function MaterialsList() {
       {/* Stats */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
         <StatsCard
-          title="Total Materials"
+          title="Total Inventory Items"
           value={materials.length}
           color="primary"
         />
@@ -148,7 +148,7 @@ export default function MaterialsList() {
           color="red"
         />
         <StatsCard
-          title="Active Materials"
+          title="Active Inventory Items"
           value={materials.filter(m => m.is_active).length}
           color="green"
         />
@@ -165,7 +165,7 @@ export default function MaterialsList() {
                 : 'text-gray-500 hover:text-gray-700'
             }`}
           >
-            All Materials ({materials.length})
+            All Inventory Items ({materials.length})
           </button>
           <button
             onClick={() => setFilter('low_stock')}
@@ -186,7 +186,7 @@ export default function MaterialsList() {
           columns={columns}
           data={displayedMaterials}
           loading={loading}
-          emptyMessage="No materials found"
+          emptyMessage="No inventory items found"
         />
       </Card>
 
